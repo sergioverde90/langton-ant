@@ -1,0 +1,100 @@
+<html>
+
+<head>
+    <title>Langton ant simulator</title>
+</head>
+
+<body>
+    <canvas width="900" height="900" id="canvas" />
+    <script>
+
+        /** @type {HTMLCanvasElement} */
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const arr = []
+        const ARR_SIZE = 150;
+        const CELL_SIZE = 6;
+        const ITERATIONS = 12750;
+
+        window.onload = () => {
+
+            // initialize the plane
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // initialize cells
+            for (let i = 0; i < ARR_SIZE; i++) {
+                arr[i] = [];
+                for (let j = 0; j < ARR_SIZE; j++) {
+                    arr[i][j] = false; // false = black, true = white
+                }
+            }
+
+            // print the plane
+            ctx.strokeStyle = "lightgray";
+            for (let i = 0; i < arr.length; i++) {
+                var innerArr = arr[i];
+                for (let j = 0; j < innerArr.length; j++) {
+                    ctx.strokeRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                }
+            }
+
+            // positioning and start painting
+            var xCurPos = ARR_SIZE / 2;
+            var yCurPos = ARR_SIZE / 2;
+            var cardinalDir = 1; // 1 = N, 2 = E, 3 = S, 4 = W
+
+            for (let i = 0; i < ITERATIONS; i++) {
+
+                setInterval(() => {
+                    var isWhite = arr[xCurPos][yCurPos];
+
+                    // 1º change cell color
+                    isWhite == false ? ctx.fillStyle = "white" : ctx.fillStyle = "black";
+                    ctx.fillRect(xCurPos * CELL_SIZE, yCurPos * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    arr[xCurPos][yCurPos] = !isWhite;
+
+                    // 2º if    black -> turn 90º to the right
+                    //    else  white -> turn 90º to the left
+                    if (!arr[xCurPos][yCurPos]) {
+                        if ((cardinalDir + 1) > 4) {
+                            cardinalDir = 1;
+                        } else {
+                            cardinalDir += 1;
+                        }
+                    } else {
+                        if ((cardinalDir - 1) < 1) {
+                            cardinalDir = 4;
+                        } else {
+                            cardinalDir -= 1;
+                        }
+                    }
+
+                    // 3º move forward one cell
+                    switch (cardinalDir) {
+                        case 1: {
+                            yCurPos -= 1;
+                            break;
+                        }
+                        case 2: {
+                            xCurPos += 1;
+                            break;
+                        }
+                        case 3: {
+                            yCurPos += 1;
+                            break;
+                        }
+                        case 4: {
+                            xCurPos -= 1;
+                            break;
+                        }
+                    }
+                })
+
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
